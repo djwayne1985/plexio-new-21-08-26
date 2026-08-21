@@ -1,6 +1,8 @@
 name: Publish Docker image
 
 on:
+  push:
+    branches: [main]
   release:
     types: [published]
   workflow_dispatch:
@@ -13,6 +15,9 @@ on:
 permissions:
   contents: read
   packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/djwayne1985/plexio-new-21-08-26
 
 jobs:
   push_to_registry:
@@ -33,10 +38,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}},value=${{ github.event.release.tag_name || inputs.version }}
-            type=raw,value=latest,enable=${{ github.event.release.prerelease != true }}
+            type=sha,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=semver,pattern={{version}},value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
+            type=raw,value=${{ inputs.version }},enable=${{ github.event_name == 'workflow_dispatch' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6

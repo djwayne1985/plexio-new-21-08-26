@@ -15,10 +15,14 @@ Three Plex API calls are now proxied through the backend instead of the browser:
 
 ## Quick start
 
+```bash
+docker pull ghcr.io/djwayne1985/plexio-new-21-08-26:latest
+```
+
 ```yaml
 services:
   plexio:
-    image: ghcr.io/senserpro/plexio:latest
+    image: ghcr.io/djwayne1985/plexio-new-21-08-26:latest
     container_name: plexio
     restart: unless-stopped
     volumes:
